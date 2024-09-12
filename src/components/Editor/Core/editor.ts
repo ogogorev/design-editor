@@ -47,6 +47,9 @@ import {
   $renderingKey,
 } from "./state";
 
+let isMouseEvent = false;
+const isTouchEvent = false;
+
 export class Editor {
   canvas: Canvas;
 
@@ -89,10 +92,13 @@ export class Editor {
       onMouseMove: this.handleMouseMove,
       onMouseUp: this.handleMouseUp,
       onWheel: this.handleWheel,
+      onTouchStart: this.handleTouchStart,
+      onTouchMove: this.handleTouchMove,
+      onTouchEnd: this.handleTouchEnd,
     });
 
     const label = "Random";
-    const x = 800;
+    const x = 10;
     const y = 200;
 
     const text = new Text(label, "red", x, y);
@@ -191,6 +197,10 @@ export class Editor {
 
   // TODO: Set actions in mouse move first
   handleMouseDown = (event: MouseEvent) => {
+    isMouseEvent = true;
+
+    console.log("mouse down");
+
     this.setCursorPosition(event.offsetX, event.offsetY);
 
     const elementI = this.checkColisionsAtXY(this.cursorX, this.cursorY);
@@ -224,6 +234,10 @@ export class Editor {
   };
 
   handleMouseMove = (event: MouseEvent) => {
+    // if (!isMouseEvent) return;
+
+    console.log("mouse move");
+
     if (isActionSet(getCurrentAction())) {
       this.setCursorPosition(event.offsetX, event.offsetY);
     }
@@ -232,6 +246,8 @@ export class Editor {
   };
 
   handleMouseUp = () => {
+    if (!isMouseEvent) return;
+
     this.stopUpdating();
 
     console.log("mouse up");
@@ -257,6 +273,8 @@ export class Editor {
     this.setCursorPosition();
 
     this.update();
+
+    isMouseEvent = false;
   };
 
   handleWheel = (event: WheelEvent) => {
@@ -278,6 +296,37 @@ export class Editor {
         this.stopUpdating();
       }, 100);
     }
+  };
+
+  handleTouchStart = (event: TouchEvent) => {
+    // isTouchEvent = true;
+    // console.log("touch start", event);
+    // const touch = event.touches[0];
+    // this.handleMouseDown({
+    //   offsetX: touch.clientX,
+    //   offsetY: touch.clientY,
+    // } as any);
+  };
+
+  handleTouchMove = (event: TouchEvent) => {
+    // if (!isTouchEvent) return;
+    // console.log("touch move", event);
+    // const touch = event.touches[0];
+    // this.handleMouseMove({
+    //   offsetX: touch.clientX,
+    //   offsetY: touch.clientY,
+    // } as any);
+  };
+
+  handleTouchEnd = (event: TouchEvent) => {
+    // if (!isTouchEvent) return;
+    // console.log("touch end", event);
+    // isTouchEvent = false;
+    // const touch = event.touches[0];
+    // this.handleMouseMove({
+    //   offsetX: touch.clientX,
+    //   offsetY: touch.clientY,
+    // } as any);
   };
 
   handleKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
